@@ -20,11 +20,11 @@ async function main(){
     await mongoose.connect(MONGO_URL);
 }
 
-app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
+app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "/public")));
 
 app.get("/", (req, res) => {
@@ -49,18 +49,24 @@ app.get("/listings/new", (req, res) => {
 app.get("/listings/:id", async (req, res) => {
     let {id}= req.params;
     const listing = await Listing.findById(id);
+    console.log(listing);
     res.render("listings/show.ejs", { listing });
 });
 
 
-//create route
-app.post("/listings", async(req, res) => {
-    // let {title, description, image, price, country, location} = req.body;
-    // let listing= req.body.listing;
+// Create Route
+app.post("/listings", async (req, res) => {
+    console.log("Request Body:", req.body.listing);
+
     const newListing = new Listing(req.body.listing);
-     await newListing.save();
+
+    console.log("New Listing:", newListing);
+
+    await newListing.save();
+
     res.redirect("/listings");
 });
+
 
 
 //edit route
